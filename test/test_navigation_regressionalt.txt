@@ -1,0 +1,197 @@
+import os
+import pytest
+import rclpy
+from rclpy.action import ActionClient
+from rclpy.parameter import Parameter
+from nav2_msgs.action import NavigateToPose
+from nav2_msgs.srv import ManageLifecycleNodes, ClearEntireCostmap
+from action_msgs.msg import GoalStatus
+from geometry_msgs.msg import PoseWithCovarianceStamped
+from rcl_interfaces.srv import SetParameters
+from gazebo_msgs.srv import SetEntityState
+
+MAX_LINEAR_SPEED_MPS = 0.5
+ROBOT_NAME = 'waffle'  # Αλλάξτε το σε 'burger' αν χρησιμοποιείτε άλλο μοντέλο
+
+
+def test_robot_navigation():
+    # 1. Διαβάζουμε την Αρχική Θέση από τις μεταβλητές περιβάλλοντος
+    INIT_X = float(os.environ.get("ROBOT_X", "-0.9853"))
+    INIT_Y = float(os.environ.get("ROBOT_Y", "0.5273"))
+
+    # 2. Διαβάζουμε τους Στόχους από τις μεταβλητές περιβάλλοντος
+    g1_x = float(os.environ.get("GOAL1_X", "-0.9853"))
+    g1_y = float(os.environ.get("GOAL1_Y", "1.6079"))
+    
+    g2_x = float(os.environ.get("GOAL2_X", "-0.9853"))
+    g2_y = float(os.environ.get("GOAL2_Y", "1.8000"))
+
+    goal_positions = [(g1_x, g1_y), (g2_x, g2_y)]
+
+    rclpy.init()
+    
+    node = rclpy.create_node('direct_nav_test', parameter_overrides=[
+        Parameter('use_sim_time', Parameter.Type.BOOL, True)
+    ])
+
+    client = ActionClient(node, NavigateToPose, 'navigate_to_pose')
+    pub_init = node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 10)
+    
+    # Service clients
+    gazebo_set_state_cli = node.create_client(SetEntityState, '/gazebo/set_entity_state')
+    localization_manager = node.create_client(
+        ManageLifecycleNodes, '/lifecycle_manager_localization/manage_nodes')
+    navigation_manager = node.create_client(
+        ManageLifecycleNodes, '/lifecycle_manager_navigation/manage_nodes')
+    speed_client = node.create_client(
+        SetParameters, '/controller_server/set_parameters')
+
+    # Ασφαλής, μη-διακοπτική διαχείριση lifecycle nodes (χωρίς pytest.fail)
+    def start_lifecycle_manager(manager, name):
+        """Προσπαθεί να ξεκινήσει τον lifecycle manager χωρίς να διακόπτει το test."""
+        if not manager.wait_for_service(timeout_sec=2.0):
+            print(f'[INFO] {name} lifecycle manager service not found (assuming managed externally). Proceeding...')
+            return
+
+        request_msg = ManageLifecycleNodes.Request()
+        request_msg.command = ManageLifecycleNodes.Request.STARTUP
+        future = manager.call_async(request_msg)
+        
+        try:
+            rclpy.spin_until_future_complete(node, future, timeout_sec=3.0)
+            print(f'[INFO] {name} lifecycle manager call finished. Proceeding...')
+        except Exception as e:
+            print(f'[WARN] {name} lifecycle manager exception: {e}. Proceeding...')
+
+    print(f'\n[0/7] Resetting physical robot pose in Gazebo to ({INIT_X}, {INIT_Y})...')
+    if gazebo_set_state_cli.wait_for_service(timeout_sec=10.0):
+        req = SetEntityState.Request()
+        req.state.name = ROBOT_NAME
+        req.state.pose.position.x = INIT_X
+        req.state.pose.position.y = INIT_Y
+        req.state.pose.position.z = 0.01  # Ελαφρώς ανασηκωμένο για αποφυγή collision
+        req.state.pose.orientation.w = 1.0
+
+        future = gazebo_set_state_cli.call_async(req)
+        rclpy.spin_until_future_complete(node, future, timeout_sec=5.0)
+        print("[Gazebo] Robot physical pose reset completed successfully!")
+    else:
+        print("[WARN] Gazebo /gazebo/set_entity_state service is unavailable. Proceeding anyway...")
+
+    print('\n[1/7] Checking localization lifecycle...')
+    start_lifecycle_manager(localization_manager, 'Localization')
+
+    print(f"[2/7] Publishing Initial Pose to AMCL ({INIT_X}, {INIT_Y})...")
+    init_msg = PoseWithCovarianceStamped()
+    init_msg.header.frame_id = 'map'
+    init_msg.pose.pose.position.x = INIT_X
+    init_msg.pose.pose.position.y = INIT_Y
+    init_msg.pose.pose.orientation.w = 1.0
+
+    # Δημοσίευση 20 φορές για να βεβαιωθούμε ότι το AMCL έλαβε το μήνυμα
+    for _ in range(20):
+        init_msg.header.stamp = node.get_clock().now().to_msg()
+        pub_init.publish(init_msg)
+        rclpy.spin_once(node, timeout_sec=0.1)
+
+    # Αναμονή 2s για σταθεροποίηση του AMCL
+    start_wait = node.get_clock().now()
+    while (node.get_clock().now() - start_wait).nanoseconds / 1e9 < 2.0:
+        rclpy.spin_once(node, timeout_sec=0.1)
+
+    print('\n[3/7] Checking navigation lifecycle...')
+    start_lifecycle_manager(navigation_manager, 'Navigation')
+
+    print("[4/7] Connecting to Nav2 Action Server...")
+    connected = client.wait_for_server(timeout_sec=30.0)
+    if not connected:
+        node.destroy_node()
+        rclpy.shutdown()
+        pytest.fail("To Nav2 δεν αποκρίνεται εντός 30s.")
+
+    print(f"[5/7] Setting maximum speed to {MAX_LINEAR_SPEED_MPS:.2f} m/s...")
+    if not speed_client.wait_for_service(timeout_sec=5.0):
+        node.destroy_node()
+        rclpy.shutdown()
+        pytest.fail('Controller parameter service is unavailable.')
+
+    speed_request = SetParameters.Request()
+    speed_request.parameters.append(
+        Parameter('FollowPath.max_vel_x', value=MAX_LINEAR_SPEED_MPS).to_parameter_msg()
+    )
+    speed_future = speed_client.call_async(speed_request)
+    rclpy.spin_until_future_complete(node, speed_future, timeout_sec=5.0)
+    if not speed_future.done() or not speed_future.result().results[0].successful:
+        node.destroy_node()
+        rclpy.shutdown()
+        pytest.fail('Failed to set FollowPath.max_vel_x')
+
+    print("[6/7] Clearing Global & Local Costmaps...")
+    global_cli = node.create_client(ClearEntireCostmap, '/global_costmap/clear_entirely_global_costmap')
+    local_cli = node.create_client(ClearEntireCostmap, '/local_costmap/clear_entirely_local_costmap')
+    
+    if global_cli.wait_for_service(timeout_sec=5.0):
+        f1 = global_cli.call_async(ClearEntireCostmap.Request())
+        rclpy.spin_until_future_complete(node, f1, timeout_sec=2.0)
+    if local_cli.wait_for_service(timeout_sec=5.0):
+        f2 = local_cli.call_async(ClearEntireCostmap.Request())
+        rclpy.spin_until_future_complete(node, f2, timeout_sec=2.0)
+
+    start_wait = node.get_clock().now()
+    while (node.get_clock().now() - start_wait).nanoseconds / 1e9 < 1.0:
+        rclpy.spin_once(node, timeout_sec=0.05)
+
+    MAX_SIM_TIME_SEC = 60.0
+    for goal_index, (goal_x, goal_y) in enumerate(goal_positions, start=1):
+        print(f"[7/7] Sending goal {goal_index}: ({goal_x}, {goal_y})...")
+        goal = NavigateToPose.Goal()
+        goal.pose.header.frame_id = 'map'
+        goal.pose.header.stamp = node.get_clock().now().to_msg()
+        goal.pose.pose.position.x = goal_x
+        goal.pose.pose.position.y = goal_y
+        goal.pose.pose.orientation.w = 1.0
+
+        send_future = client.send_goal_async(goal)
+        rclpy.spin_until_future_complete(node, send_future, timeout_sec=10.0)
+
+        if not send_future.done():
+            node.destroy_node()
+            rclpy.shutdown()
+            pytest.fail(f"Timeout sending goal {goal_index} to Nav2!")
+
+        goal_handle = send_future.result()
+        if not goal_handle.accepted:
+            node.destroy_node()
+            rclpy.shutdown()
+            pytest.fail(f"Goal {goal_index} rejected by Nav2!")
+
+        print(f">>> Goal {goal_index} accepted! Navigating... <<<")
+        res_future = goal_handle.get_result_async()
+        start_sim_time = node.get_clock().now()
+
+        while not res_future.done():
+            rclpy.spin_once(node, timeout_sec=0.05)
+            current_sim_time = node.get_clock().now()
+            elapsed_sec = (current_sim_time - start_sim_time).nanoseconds / 1e9
+
+            if int(elapsed_sec) % 5 == 0:
+                print(f"Goal {goal_index}: elapsed sim time {elapsed_sec:.1f}s")
+
+            if elapsed_sec > MAX_SIM_TIME_SEC:
+                node.destroy_node()
+                rclpy.shutdown()
+                pytest.fail(
+                    f"Goal {goal_index} exceeded {MAX_SIM_TIME_SEC}s simulation time."
+                )
+
+        status = res_future.result().status
+        print(f"Goal {goal_index} finished with status code: {status}")
+        if status != GoalStatus.STATUS_SUCCEEDED:
+            node.destroy_node()
+            rclpy.shutdown()
+            pytest.fail(f"Goal {goal_index} failed with status code: {status}")
+    
+    node.destroy_node()
+    rclpy.shutdown()
+
+    print("\n>>> SUCCESS: All goals reached! <<<")

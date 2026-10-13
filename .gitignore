@@ -1,0 +1,18 @@
+# Python temporary files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# ROS 2 build / install artifacts (σε περίπτωση που έγιναν build εδώ)
+build/
+install/
+log/
+
+# Generated Report Files (τα παράγει αυτόματα το CI pipeline)
+my_nav_tests/navigation_regression_report.json
+my_nav_tests/navigation_metrics.csv
+
+# System files
+.DS_Store
+*.swp

@@ -1,0 +1,11 @@
+{
+    "timestamp": "2026-10-08 15:12:53",
+    "success": true,
+    "total_time_sec": 54.6,
+    "total_distance_m": 3.18,
+    "straight_line_distance_m": 2.69,
+    "path_efficiency": 0.846,
+    "final_positional_error_m": 1.837,
+    "min_obstacle_clearance_m": 0.329,
+    "average_speed_m_s": 0.06
+}
