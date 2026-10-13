@@ -1,31 +1,24 @@
-import os
-from glob import glob
 from setuptools import find_packages, setup
 
-package_name = 'my_nav_tests'
-
 setup(
-    name=package_name,
+    name='my_nav_tests',
     version='0.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-        # Συμπερίληψη του test_thresholds.json στο share directory
-        (os.path.join('share', package_name), glob('my_nav_tests/*.json')),
+            ['resource/my_nav_tests']),
+        ('share/my_nav_tests', ['package.xml']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='user',
+    maintainer='LefterisPet',
     maintainer_email='user@todo.todo',
-    description='Automated Nav2 Metrics & Regression Testing Package',
+    description='Nav2 regression testing package',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'metrics_collector = my_nav_tests.metrics_collector:main',
-            'regression_checker = my_nav_tests.regression_checker:run_regression_check',
+            # Πρόσθεσε εδώ τα executables σου αν έχεις (π.χ. 'test_node = my_nav_tests.test_node:main')
         ],
     },
 )
