@@ -1,4 +1,6 @@
-# My Nav2 Tests
+
+# Nav2 Regression Testing Suite
+Automated metrics collection and regression testing for ROS 2 Jazzy and Nav2.
 
 Μικρό και αυτόνομο πακέτο ROS 2 για αυτοματοποιημένο έλεγχο (Regression Testing) και συλλογή μετρικών από το Nav2 Stack.
 
