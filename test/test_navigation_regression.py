@@ -116,7 +116,7 @@ class Nav2MetricsCollector(Node):
             self.initial_pose_pub.publish(msg)
             time.sleep(0.4)
 
-    def send_goal(self, goal_x=1.5, goal_y=2.0):
+    def send_goal(self, goal_x=2.0, goal_y=2.0):
         """Send navigation goal to Nav2 action server."""
         print('[TEST] Αναμονή για τον Action Server Nav2...')
         if not self.nav_to_pose_client.wait_for_server(timeout_sec=15.0):
@@ -151,7 +151,7 @@ class Nav2MetricsCollector(Node):
         self.navigation_success = (status == 4)
         return self.navigation_success
 
-    def save_reports(self, start_pose=(-2.0, -0.5), goal_pose=(1.5, 2.0)):
+    def save_reports(self, start_pose=(-2.0, -0.5), goal_pose=(2.0, 2.0)):
         """Save collected metrics to JSON and CSV reports."""
         target_dir = os.path.dirname(os.path.abspath(__file__))
         json_path = os.path.join(target_dir, 'navigation_regression_report.json')
@@ -196,7 +196,7 @@ class TestNavigationRegression(unittest.TestCase):
         sim_process = launch_headless_simulation()
         
         # Ορισμός νέων συντεταγμένων στόχου εδώ
-        target_goal_x = 1.5
+        target_goal_x = 2.0
         target_goal_y = 2.0
         start_x = -2.0
         start_y = -0.5
