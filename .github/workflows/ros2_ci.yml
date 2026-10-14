@@ -53,5 +53,5 @@ jobs:
         with:
           name: navigation-reports
           path: |
-            ~/ros2_nav_test_ws/build/my_nav_tests/navigation_regression_report.json
-            ~/ros2_nav_test_ws/build/my_nav_tests/navigation_metrics.csv
+            **/navigation_regression_report.json
+            **/navigation_metrics.csv
