@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # Επιτρέπει και χειροκίνητη εκτέλεση
+  workflow_dispatch:
 
 jobs:
   run-regression-test:
@@ -30,24 +30,27 @@ jobs:
 
       - name: Build Workspace
         run: |
-          mkdir -p ~/ros2_ws/src
-          # Μεταφέρουμε το τρέχον repo μέσα στο workspace src
-          cp -r $GITHUB_WORKSPACE ~/ros2_ws/src/my_nav_tests
-          cd ~/ros2_ws
+          mkdir -p ~/ros2_nav_test_ws/src
+          # Αντιγραφή του repo στο workspace src
+          cp -r $GITHUB_WORKSPACE ~/ros2_nav_test_ws/src/my_nav_tests
+          cd ~/ros2_nav_test_ws
           . /opt/ros/jazzy/setup.bash
           colcon build --packages-select my_nav_tests
 
-      - name: Run Nav2 Regression Test
+      - name: Run Nav2 Regression Test with Colcon
         run: |
-          cd ~/ros2_ws
+          cd ~/ros2_nav_test_ws
           . /opt/ros/jazzy/setup.bash
           . install/setup.bash
-          # Εκτέλεση του test script με Xvfb για υποστήριξη γραφικών/headless sim
-          xvfb-run -a ros2 run my_nav_tests test_navigation_regression
+          # Εκτέλεση μέσω colcon test και xvfb για το headless simulation
+          xvfb-run -a colcon test --packages-select my_nav_tests --event-handlers console_direct+
+          colcon test-result --all
 
       - name: Upload Test Reports (Artifacts)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: navigation-reports
-          path: ~/ros2_ws/src/my_nav_tests/my_nav_tests/navigation_regression_report.json
+          path: |
+            ~/ros2_nav_test_ws/build/my_nav_tests/navigation_regression_report.json
+            ~/ros2_nav_test_ws/build/my_nav_tests/navigation_metrics.csv
