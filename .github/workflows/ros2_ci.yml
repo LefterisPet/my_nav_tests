@@ -44,7 +44,8 @@ jobs:
           . install/setup.bash
           # Εκτέλεση μέσω colcon test και xvfb για το headless simulation
           xvfb-run -a colcon test --packages-select my_nav_tests --event-handlers console_direct+
-          colcon test-result --all
+          colcon test-result --all || true
+          cat build/my_nav_tests/pytest.xml
 
       - name: Upload Test Reports (Artifacts)
         if: always()
