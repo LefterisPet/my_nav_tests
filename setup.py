@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+import os
+from glob import glob
 
 setup(
     name='my_nav_tests',
@@ -8,6 +10,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/my_nav_tests']),
         ('share/my_nav_tests', ['package.xml']),
+        (os.path.join('share', 'my_nav_tests', 'launch'), glob('launch/*.launch.py')),
+        (os.path.join('share', 'my_nav_tests', 'config'), glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

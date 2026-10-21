@@ -4,12 +4,14 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression, Command
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
+    package_dir = get_package_share_directory('my_nav_tests')
 
     use_rviz = LaunchConfiguration('use_rviz', default='False')
     headless = LaunchConfiguration('headless', default='True')
@@ -33,7 +35,7 @@ def generate_launch_description():
             ),
             launch_arguments={
                 'map': os.path.join(nav2_bringup_dir, 'maps', 'tb3_sandbox.yaml'),
-                'params_file': os.path.join(nav2_bringup_dir, 'params', 'nav2_params.yaml'),
+                'params_file': os.path.join(package_dir, 'config', 'nav2_params.yaml'),
                 'rviz_config_file': os.path.join(
                     nav2_bringup_dir, 'rviz', 'nav2_default_view.rviz'
                 ),
