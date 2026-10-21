@@ -30,7 +30,7 @@ def clean_environment():
     ]
     for target in targets:
         subprocess.run(['pkill', '-9', '-f', target], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-    
+
     shm_patterns = ['/dev/shm/fastrtps_*', '/dev/shm/sem.fastrtps_*', '/tmp/fastrtps_*']
     for pattern in shm_patterns:
         for filepath in glob.glob(pattern):
@@ -51,7 +51,7 @@ def launch_headless_simulation():
     env['TURTLEBOT3_MODEL'] = 'waffle'
     env['GZ_SIM_RESOURCE_PATH'] = '/opt/ros/jazzy/share/turtlebot3_gazebo/models:/opt/ros/jazzy/share'
     env['GAZEBO_MODEL_PATH'] = '/opt/ros/jazzy/share/turtlebot3_gazebo/models'
-    
+
     cmd = [
         'ros2', 'launch', 'nav2_bringup', 'tb3_simulation_launch.py',
         'use_sim_time:=True', 'headless:=True', 'use_rviz:=False', 'autostart:=True'
@@ -71,7 +71,7 @@ class Nav2MetricsCollector(Node):
         self.initial_pose_pub = self.create_publisher(PoseWithCovarianceStamped, '/initialpose', 10)
         self.odom_sub = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
         self.scan_sub = self.create_subscription(LaserScan, '/scan', self.scan_callback, 10)
-        
+
         self.current_pose = None
         self.last_pose = None
         self.total_distance = 0.0
@@ -134,7 +134,7 @@ class Nav2MetricsCollector(Node):
         self.start_time = time.time()
         send_goal_future = self.nav_to_pose_client.send_goal_async(goal_msg)
         rclpy.spin_until_future_complete(self, send_goal_future)
-        
+
         goal_handle = send_goal_future.result()
         if not goal_handle.accepted:
             print('[ERROR] Το Goal απορρίφθηκε από το Nav2!')
@@ -156,7 +156,7 @@ class Nav2MetricsCollector(Node):
         target_dir = os.path.dirname(os.path.abspath(__file__))
         json_path = os.path.join(target_dir, 'navigation_regression_report.json')
         csv_path = os.path.join(target_dir, 'navigation_metrics.csv')
-        
+
         total_time = (self.end_time - self.start_time) if (self.start_time and self.end_time) else 0.0
         straight_dist = math.sqrt((goal_pose[0] - start_pose[0])**2 + (goal_pose[1] - start_pose[1])**2)
         efficiency = (straight_dist / self.total_distance) if self.total_distance > 0 else 0.0
@@ -194,7 +194,7 @@ class TestNavigationRegression(unittest.TestCase):
         """Execute simulation and check navigation success."""
         clean_environment()
         sim_process = launch_headless_simulation()
-        
+
         # Ορισμός νέων συντεταγμένων στόχου εδώ
         target_goal_x = 2.0
         target_goal_y = 2.0
