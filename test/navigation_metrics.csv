@@ -1,0 +1,3 @@
+timestamp,success,total_time_sec,total_distance_m,straight_line_distance_m,path_efficiency,final_positional_error_m,min_obstacle_clearance_m,average_speed_m_s
+2026-10-08 15:12:53,True,54.6,3.18,2.69,0.846,1.837,0.329,0.06
+2026-10-14 11:34:59,True,15.46,3.09,2.69,0.872,1.851,0.366,0.2

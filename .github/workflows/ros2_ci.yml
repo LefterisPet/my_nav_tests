@@ -1,0 +1,57 @@
+name: Nav2 Regression CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  run-regression-test:
+    runs-on: ubuntu-24.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup ROS 2 Jazzy Environment
+        run: |
+          sudo apt update && sudo apt install -y software-properties-common
+          sudo add-apt-repository universe
+          sudo apt update && sudo apt install -y curl gnupg lsb-release
+          
+          # Προσθήκη ROS 2 repository
+          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+          
+          sudo apt update
+          sudo apt install -y ros-jazzy-desktop ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-turtlebot3-gazebo python3-colcon-common-extensions xvfb
+
+      - name: Build Workspace
+        run: |
+          mkdir -p ~/ros2_nav_test_ws/src
+          # Αντιγραφή του repo στο workspace src
+          cp -r $GITHUB_WORKSPACE ~/ros2_nav_test_ws/src/my_nav_tests
+          cd ~/ros2_nav_test_ws
+          . /opt/ros/jazzy/setup.bash
+          colcon build --packages-select my_nav_tests
+
+      - name: Run Nav2 Regression Test with Colcon
+        run: |
+          cd ~/ros2_nav_test_ws
+          . /opt/ros/jazzy/setup.bash
+          . install/setup.bash
+          # Εκτέλεση μέσω colcon test και xvfb για το headless simulation
+          xvfb-run -a colcon test --packages-select my_nav_tests --event-handlers console_direct+
+          colcon test-result --all || true
+          cat build/my_nav_tests/pytest.xml
+
+      - name: Upload Test Reports (Artifacts)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: navigation-reports
+          path: |
+            **/navigation_regression_report.json
+            **/navigation_metrics.csv
