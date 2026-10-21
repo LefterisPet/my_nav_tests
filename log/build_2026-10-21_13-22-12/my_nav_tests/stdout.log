@@ -1,0 +1,17 @@
+running egg_info
+writing ../../build/my_nav_tests/my_nav_tests.egg-info/PKG-INFO
+writing dependency_links to ../../build/my_nav_tests/my_nav_tests.egg-info/dependency_links.txt
+writing requirements to ../../build/my_nav_tests/my_nav_tests.egg-info/requires.txt
+writing top-level names to ../../build/my_nav_tests/my_nav_tests.egg-info/top_level.txt
+reading manifest file '../../build/my_nav_tests/my_nav_tests.egg-info/SOURCES.txt'
+writing manifest file '../../build/my_nav_tests/my_nav_tests.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+running install_egg_info
+removing '/home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests-0.0.0-py3.12.egg-info' (and everything under it)
+Copying ../../build/my_nav_tests/my_nav_tests.egg-info to /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests-0.0.0-py3.12.egg-info
+running install_scripts
+writing list of installed files to '/home/leftpet/ros2_nav_test_ws/build/my_nav_tests/install.log'

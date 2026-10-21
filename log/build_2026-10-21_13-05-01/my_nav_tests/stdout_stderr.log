@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/my_nav_tests/my_nav_tests.egg-info
+writing ../../build/my_nav_tests/my_nav_tests.egg-info/PKG-INFO
+writing dependency_links to ../../build/my_nav_tests/my_nav_tests.egg-info/dependency_links.txt
+writing requirements to ../../build/my_nav_tests/my_nav_tests.egg-info/requires.txt
+writing top-level names to ../../build/my_nav_tests/my_nav_tests.egg-info/top_level.txt
+writing manifest file '../../build/my_nav_tests/my_nav_tests.egg-info/SOURCES.txt'
+reading manifest file '../../build/my_nav_tests/my_nav_tests.egg-info/SOURCES.txt'
+writing manifest file '../../build/my_nav_tests/my_nav_tests.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build
+creating /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build/lib
+creating /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build/lib/my_nav_tests
+copying my_nav_tests/__init__.py -> /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build/lib/my_nav_tests
+copying my_nav_tests/metrics_collector.py -> /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build/lib/my_nav_tests
+running install
+running install_lib
+creating /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests
+copying /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build/lib/my_nav_tests/__init__.py -> /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests
+copying /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build/lib/my_nav_tests/metrics_collector.py -> /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests
+byte-compiling /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests/__init__.py to __init__.cpython-312.pyc
+byte-compiling /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests/metrics_collector.py to metrics_collector.cpython-312.pyc
+running install_data
+creating /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/share/ament_index
+creating /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/share/ament_index/resource_index
+creating /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/share/ament_index/resource_index/packages
+copying resource/my_nav_tests -> /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/share/ament_index/resource_index/packages
+copying package.xml -> /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/share/my_nav_tests
+creating /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/share/my_nav_tests/launch
+copying launch/nav2_tb3_sim.launch.py -> /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/share/my_nav_tests/launch
+running install_egg_info
+Copying ../../build/my_nav_tests/my_nav_tests.egg-info to /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests-0.0.0-py3.12.egg-info
+running install_scripts
+writing list of installed files to '/home/leftpet/ros2_nav_test_ws/build/my_nav_tests/install.log'

@@ -1,0 +1,19 @@
+[0.296s] Invoking command in '/home/leftpet/ros2_nav_test_ws/src/my_nav_tests': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/leftpet/ros2_nav_test_ws/build/my_nav_tests/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/my_nav_tests build --build-base /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build install --record /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/install.log --install-scripts $base/lib/my_nav_tests --single-version-externally-managed install_data
+[0.393s] running egg_info
+[0.397s] writing ../../build/my_nav_tests/my_nav_tests.egg-info/PKG-INFO
+[0.397s] writing dependency_links to ../../build/my_nav_tests/my_nav_tests.egg-info/dependency_links.txt
+[0.398s] writing requirements to ../../build/my_nav_tests/my_nav_tests.egg-info/requires.txt
+[0.398s] writing top-level names to ../../build/my_nav_tests/my_nav_tests.egg-info/top_level.txt
+[0.407s] reading manifest file '../../build/my_nav_tests/my_nav_tests.egg-info/SOURCES.txt'
+[0.408s] writing manifest file '../../build/my_nav_tests/my_nav_tests.egg-info/SOURCES.txt'
+[0.408s] running build
+[0.408s] running build_py
+[0.408s] running install
+[0.411s] running install_lib
+[0.416s] running install_data
+[0.416s] running install_egg_info
+[0.422s] removing '/home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests-0.0.0-py3.12.egg-info' (and everything under it)
+[0.422s] Copying ../../build/my_nav_tests/my_nav_tests.egg-info to /home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages/my_nav_tests-0.0.0-py3.12.egg-info
+[0.422s] running install_scripts
+[0.463s] writing list of installed files to '/home/leftpet/ros2_nav_test_ws/build/my_nav_tests/install.log'
+[0.477s] Invoked command in '/home/leftpet/ros2_nav_test_ws/src/my_nav_tests' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/leftpet/ros2_nav_test_ws/build/my_nav_tests/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/leftpet/ros2_nav_test_ws/install/my_nav_tests/lib/python3.12/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/my_nav_tests build --build-base /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/build install --record /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/install.log --install-scripts $base/lib/my_nav_tests --single-version-externally-managed install_data

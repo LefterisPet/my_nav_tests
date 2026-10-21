@@ -1,0 +1,15 @@
+[1m============================= test session starts ==============================[0m
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+cachedir: /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/.pytest_cache
+rootdir: /home/leftpet/ros2_nav_test_ws/src/my_nav_tests
+plugins: launch-testing-ros-0.26.13, ament-pep257-0.17.5, ament-xmllint-0.17.5, ament-copyright-0.17.5, ament-lint-0.17.5, launch-testing-3.4.12, ament-flake8-0.17.5, colcon-core-0.21.3, cov-4.1.0, typeguard-4.1.5
+[1mcollecting ... [0m[1m
+collected 1 item                                                               [0m
+
+test/test_navigation_regression.py 
+
+- generated xml file: /home/leftpet/ros2_nav_test_ws/build/my_nav_tests/pytest.xml -
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! KeyboardInterrupt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[1m[31m/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py[0m:781: KeyboardInterrupt
+[33m(to show a full traceback on KeyboardInterrupt use --full-trace)[0m
+[32m====================== [33mno tests ran[0m[32m in 309.49s (0:05:09)[0m[32m =======================[0m
