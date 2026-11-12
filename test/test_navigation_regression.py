@@ -76,7 +76,7 @@ class Nav2MetricsCollector(Node):
         self.latest_costmap = msg
 
     def check_goal_in_costmap(self, goal_x, goal_y):
-        """Ελέγχει αν ο στόχος πέφτει πάνω σε εμπόδιο ή εκτός ορίων στο costmap."""
+        """Check if the goal falls on an obstacle or out of bounds in the costmap."""
         if self.latest_costmap is None:
             self.get_logger().warn('[WARNING] Costmap not received yet! Skipping local costmap validation.')
             return True
@@ -285,7 +285,7 @@ class TestNavigationRegression(unittest.TestCase):
             env = os.environ.copy()
             env['TURTLEBOT3_MODEL'] = 'waffle'
             
-            # --- ΕΠΙΣΤΡΟΦΗ ΣΕ GUI MODE (headless:=False) ---
+            # --- RUN IN GUI MODE (headless:=False) ---
             sim_process = subprocess.Popen(
                 ['ros2', 'launch', 'nav2_bringup', 'tb3_simulation_launch.py', 'use_sim_time:=True', 'headless:=False'],
                 env=env

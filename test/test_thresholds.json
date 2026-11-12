@@ -1,0 +1,10 @@
+{
+  "description": "Acceptable performance and safety thresholds for Nav2 regression testing",
+  "thresholds": {
+    "success": true,
+    "total_time_sec_max": 120.0,
+    "path_efficiency_min": 0.5,
+    "final_positional_error_max": 2.5,
+    "min_obstacle_clearance_min": 0.08
+  }
+}
